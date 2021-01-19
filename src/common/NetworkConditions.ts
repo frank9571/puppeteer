@@ -19,30 +19,14 @@ import { NetworkConditions } from './NetworkManager.js';
 export type NetworkConditionsMap = { [name: string]: NetworkConditions };
 
 export const networkConditionsMap: NetworkConditionsMap = {
-  Online: {
-    offline: false,
-    download: -1,
-    upload: -1,
-    latency: 0,
-  },
-  Offline: {
-    offline: true,
-    download: 0,
-    upload: 0,
-    latency: 0,
-  },
   'Slow 3G': {
-    offline: false,
     download: ((500 * 1000) / 8) * 0.8,
     upload: ((500 * 1000) / 8) * 0.8,
     latency: 400 * 5,
-    connectionType: 'cellular3g',
   },
   'Fast 3G': {
-    offline: false,
     download: ((1.6 * 1000 * 1000) / 8) * 0.9,
     upload: ((750 * 1000) / 8) * 0.9,
     latency: 150 * 3.75,
-    connectionType: 'cellular3g',
   },
 };

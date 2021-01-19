@@ -697,11 +697,8 @@ export class Page extends EventEmitter {
     return this._frameManager.networkManager().setOfflineMode(enabled);
   }
 
-  /**
-   * @param enabled - When `true`, enables offline mode for the page.
-   */
   emulateNetworkConditions(
-    networkConditions: NetworkConditions
+    networkConditions: NetworkConditions | null
   ): Promise<void> {
     return this._frameManager
       .networkManager()

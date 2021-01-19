@@ -21,7 +21,6 @@ import { CDPSession } from './Connection.js';
 import { FrameManager } from './FrameManager.js';
 import { HTTPRequest } from './HTTPRequest.js';
 import { HTTPResponse } from './HTTPResponse.js';
-import { networkConditionsMap } from './NetworkConditions.js';
 
 /**
  * @public
@@ -32,32 +31,19 @@ export interface Credentials {
 }
 
 /**
- * The underlying connection technology that the browser is supposedly using.
- */
-export type ConnectionType =
-  | 'none'
-  | 'cellular2g'
-  | 'cellular3g'
-  | 'cellular4g'
-  | 'bluetooth'
-  | 'ethernet'
-  | 'wifi'
-  | 'wimax'
-  | 'other';
-
-/**
  * @public
  */
 export interface NetworkConditions {
-  offline: boolean;
   // Download speed (bytes/s)
   download: number;
   // Upload speed (bytes/s)
   upload: number;
   // Latency (ms)
   latency: number;
-  // The underlying connection technology that the browser is supposedly using.
-  connectionType?: ConnectionType;
+}
+
+export interface InternalNetworkConditions extends NetworkConditions {
+  offline: boolean;
 }
 
 /**
@@ -92,8 +78,12 @@ export class NetworkManager extends EventEmitter {
   _protocolRequestInterceptionEnabled = false;
   _userCacheDisabled = false;
   _requestIdToInterceptionId = new Map<string, string>();
-  _emulatedNetworkConditions: NetworkConditions =
-    networkConditionsMap['Online'];
+  _emulatedNetworkConditions: InternalNetworkConditions = {
+    offline: false,
+    upload: -1,
+    download: -1,
+    latency: 0,
+  };
 
   constructor(
     client: CDPSession,
@@ -161,21 +151,32 @@ export class NetworkManager extends EventEmitter {
   }
 
   async setOfflineMode(value: boolean): Promise<void> {
-    await this.emulateNetworkConditions(
-      value ? networkConditionsMap['Offline'] : networkConditionsMap['Online']
-    );
+    this._emulatedNetworkConditions.offline = value;
+    await this._updateNetworkConditions();
   }
 
   async emulateNetworkConditions(
-    networkConditions: NetworkConditions
+    networkConditions: NetworkConditions | null
   ): Promise<void> {
-    if (this._emulatedNetworkConditions === networkConditions) return;
-    this._emulatedNetworkConditions = networkConditions;
+    this._emulatedNetworkConditions.upload = networkConditions
+      ? networkConditions.upload
+      : -1;
+    this._emulatedNetworkConditions.download = networkConditions
+      ? networkConditions.download
+      : -1;
+    this._emulatedNetworkConditions.latency = networkConditions
+      ? networkConditions.latency
+      : 0;
+
+    await this._updateNetworkConditions();
+  }
+
+  async _updateNetworkConditions(): Promise<void> {
     await this._client.send('Network.emulateNetworkConditions', {
-      offline: networkConditions.offline,
-      latency: networkConditions.latency,
-      uploadThroughput: networkConditions.upload,
-      downloadThroughput: networkConditions.download,
+      offline: this._emulatedNetworkConditions.offline,
+      latency: this._emulatedNetworkConditions.latency,
+      uploadThroughput: this._emulatedNetworkConditions.upload,
+      downloadThroughput: this._emulatedNetworkConditions.download,
     });
   }
 

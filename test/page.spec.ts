@@ -389,56 +389,24 @@ describe('Page', function () {
   });
 
   describeFailsFirefox('Page.emulateNetworkConditions', function () {
-    it('should work', async () => {
-      const { page, server, puppeteer } = getTestState();
-
-      const offline = puppeteer.networkConditions['Offline'];
-      const online = puppeteer.networkConditions['Online'];
-
-      await page.emulateNetworkConditions(offline);
-      let error = null;
-      await page.goto(server.EMPTY_PAGE).catch((error_) => (error = error_));
-      expect(error).toBeTruthy();
-      await page.emulateNetworkConditions(online);
-      const response = await page.reload();
-      expect(response.status()).toBe(200);
-    });
-
-    it('should emulate navigator.onLine', async () => {
-      const { page } = getTestState();
-
-      expect(await page.evaluate(() => window.navigator.onLine)).toBe(true);
-      await page.setOfflineMode(true);
-      expect(await page.evaluate(() => window.navigator.onLine)).toBe(false);
-      await page.setOfflineMode(false);
-      expect(await page.evaluate(() => window.navigator.onLine)).toBe(true);
-    });
-
     it('should change navigator.connection.effectiveType', async () => {
       const { page, puppeteer } = getTestState();
 
       const slow3G = puppeteer.networkConditions['Slow 3G'];
       const fast3G = puppeteer.networkConditions['Fast 3G'];
-      const online = puppeteer.networkConditions['Online'];
 
       expect(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore Experimental APIs are not included in lib.d.ts
         await page.evaluate('window.navigator.connection.effectiveType')
       ).toBe('4g');
       await page.emulateNetworkConditions(fast3G);
       expect(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore Experimental APIs are not included in lib.d.ts
         await page.evaluate('window.navigator.connection.effectiveType')
       ).toBe('3g');
       await page.emulateNetworkConditions(slow3G);
       expect(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore Experimental APIs are not included in lib.d.ts
-        await page.evaluate(() => window.navigator.connection.effectiveType)
+        await page.evaluate('window.navigator.connection.effectiveType')
       ).toBe('2g');
-      await page.emulateNetworkConditions(online);
+      await page.emulateNetworkConditions(null);
     });
   });
 

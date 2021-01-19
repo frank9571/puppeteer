@@ -1464,11 +1464,10 @@ await page.evaluate(() => matchMedia('print').matches);
 ```
 
 #### page.emulateNetworkConditions(networkConditions) 
-- `networkConditions` <[Object]> Network conditions to emulate.
+- `networkConditions` <?[Object]> Passing `null` disables network condition emulation.
   - `download` <[number]> Download speed (bytes/s), `-1` to disable
   - `upload` <[number]> Upload speed (bytes/s), `-1` to disable
   - `latency` <[number]> Latency (ms), `0` to disable
-  - `connectionType` <?["none"| "cellular2g"| "cellular3g"| "cellular4g"| "bluetooth"| "ethernet"| "wifi"| "wimax"| "other"] Optional connection type
 - returns: <[Promise]>
 
 > **NOTE** This does not affect WebSockets and WebRTC PeerConnections (https://crbug.com/563644)
