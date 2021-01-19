@@ -27,8 +27,8 @@ import {
 import { Product } from './Product.js';
 import { connectToBrowser, BrowserOptions } from './BrowserConnector.js';
 import {
-  NetworkConditionsMap,
-  networkConditionsMap,
+  PredefinedNetworkConditions,
+  networkConditions,
 } from './NetworkConditions.js';
 
 /**
@@ -150,8 +150,8 @@ export class Puppeteer {
    * ```
    *
    */
-  get networkConditions(): NetworkConditionsMap {
-    return networkConditionsMap;
+  get networkConditions(): PredefinedNetworkConditions {
+    return networkConditions;
   }
 
   /**
