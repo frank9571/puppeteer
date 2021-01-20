@@ -131,7 +131,7 @@ export class Puppeteer {
 
   /**
    * @remarks
-   * Returns a list of network conditions to be used with `page.emulateNetworkConditions(networkConditions)`. Actual list of devices can be found in {@link https://github.com/puppeteer/puppeteer/blob/main/src/common/NetworkConditions.ts | src/common/NetworkConditions.ts}.
+   * Returns a list of network conditions to be used with `page.emulateNetworkConditions(networkConditions)`. Actual list of predefined conditions can be found in {@link https://github.com/puppeteer/puppeteer/blob/main/src/common/NetworkConditions.ts | src/common/NetworkConditions.ts}.
    *
    * @example
    *
